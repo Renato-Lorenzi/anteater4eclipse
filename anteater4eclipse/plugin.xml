@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+         <launchConfigurationType
+        name="Anteater"
+        delegate="br.com.anteater4eclipse.debug.core.LauncherConfiguration"
+        modes="run"                      
+        id="br.anteater4eclipse.debug.LauncherConfiguration">
+    </launchConfigurationType>
+   </extension>
+   
+   
+   <extension point="org.eclipse.debug.ui.launchShortcuts">
+    <shortcut
+        id="br.com.anteater4eclipse.debug.ui.LaunchShortcut"
+        class="br.com.anteater4eclipse.debug.ui.LaunchShortcut"
+        label="Anteater"     
+        modes="run">
+        <contextualLaunch>
+           <enablement>
+             <with variable="selection">
+               <count value="1"/>
+               <iterate>
+                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.js"/>
+               </iterate>
+             </with>
+           </enablement>
+  		 </contextualLaunch>
+            <perspective id="org.eclipse.jdt.ui.JavaPerspective"/>
+            <perspective id="org.eclipse.jdt.ui.JavaHierarchyPerspective"/>
+            <perspective id="org.eclipse.jdt.ui.JavaBrowsingPerspective"/>
+            <perspective id="org.eclipse.debug.ui.DebugPerspective"/>
+    </shortcut>
+</extension>
+
+</plugin>
