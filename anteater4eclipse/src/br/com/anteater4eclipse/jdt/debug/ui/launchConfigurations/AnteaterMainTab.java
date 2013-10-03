@@ -13,7 +13,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.PlatformUI;
 
 public class AnteaterMainTab extends AbstractLaunchConfigurationTab {
@@ -37,20 +39,22 @@ public class AnteaterMainTab extends AbstractLaunchConfigurationTab {
 
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
-
 		ISelectionService ss = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService();
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor().
-
 		ISelection sel = ss.getSelection();
 		Object selectedObject = sel;
 		if (sel instanceof IStructuredSelection) {
 			selectedObject = ((IStructuredSelection) sel).getFirstElement();
-		}
-
-		if (selectedObject instanceof IAdaptable) {
+		} else if (selectedObject instanceof IAdaptable) {
 			IResource res = (IResource) ((IAdaptable) selectedObject).getAdapter(IResource.class);
 			IProject project = res.getProject();
 			System.out.println("Project found: " + project.getName());
+		} else {
+			IEditorInput editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor().getEditorInput();
+
+			if (editor instanceof IURIEditorInput) {
+				((IURIEditorInput) editor).getURI();
+			}
+
 		}
 	}
 
