@@ -65,4 +65,6 @@ public class LauncherConfiguration extends JavaLaunchDelegate {
 		}
 		return null;
 	}
+	
+	
 }
