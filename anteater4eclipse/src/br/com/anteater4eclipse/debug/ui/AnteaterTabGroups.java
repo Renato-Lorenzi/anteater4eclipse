@@ -8,23 +8,21 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaClasspathTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
-import org.eclipse.jdt.debug.ui.launchConfigurations.JavaMainTab;
 
-import br.com.anteater4eclipse.jdt.debug.ui.launchConfigurations.AnteaterArgumentsTab;
+import br.com.anteater4eclipse.jdt.debug.ui.launchConfigurations.AnteaterMainTab;
 
 public class AnteaterTabGroups extends AbstractLaunchConfigurationTabGroup {
 
-	
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		super.initializeFrom(configuration);
 	}
+
 	@Override
 	public void createTabs(ILaunchConfigurationDialog arg0, String arg1) {
-
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {//
-				new JavaMainTab()
-		new AnteaterArgumentsTab(), new JavaArgumentsTab(), //
+		new AnteaterMainTab(),//
+				new JavaArgumentsTab(), //
 				new JavaJRETab(), //
 				new JavaClasspathTab(),//
 				new CommonTab(), //

@@ -6,8 +6,7 @@
          <launchConfigurationType
         name="Anteater"
         delegate="br.com.anteater4eclipse.debug.core.LauncherConfiguration"
-        modes="run"
-        category="com.anteater4eclipse.test"                      
+        modes="run"                            
         id="br.com.anteater4eclipse.debug.core.LauncherConfiguration">
     </launchConfigurationType>
    </extension>
@@ -18,8 +17,7 @@
         id="br.com.anteater4eclipse.debug.ui.LaunchShortcut"
         class="br.com.anteater4eclipse.debug.ui.LaunchShortcut"
         label="Anteater"     
-        modes="run"
-        category="com.anteater4eclipse.test">
+        modes="run">
         
         <contextualLaunch>
            <enablement>
@@ -49,8 +47,7 @@
 	<extension point = "org.eclipse.debug.ui.launchGroups">
 	<launchGroup
 		id = "org.eclipse.ui.externaltools.launchGroup.builder"
-		mode = "run"
-		category="com.anteater4eclipse.test"
+		mode = "run"		
 		label = "Anteater"
 		image = "icons/sample.gif"
 		bannerImage = "icons/sample.gif"

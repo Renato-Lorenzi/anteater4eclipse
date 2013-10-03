@@ -54,8 +54,7 @@ public class LaunchShortcut implements ILaunchShortcut {
 	}
 
 	@Override
-	public void launch(IEditorPart arg0, String arg1) {
-
+	public void launch(IEditorPart editor, String arg1) {
+		// editor.getEditorInput().
 	}
-
 }
