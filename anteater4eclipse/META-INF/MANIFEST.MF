@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Anteater4eclipse
 Bundle-SymbolicName: anteater4eclipse; singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: br.com.anteater4eclipse.Activator
+Bundle-Activator: br.com.anteater4eclipse.AnteaterPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.jface.text,

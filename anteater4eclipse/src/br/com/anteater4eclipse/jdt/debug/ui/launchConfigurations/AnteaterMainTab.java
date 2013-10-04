@@ -1,7 +1,9 @@
 package br.com.anteater4eclipse.jdt.debug.ui.launchConfigurations;
 
-import org.eclipse.core.resources.IProject;
+import java.io.File;
+
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -17,6 +19,8 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.PlatformUI;
+
+import br.com.anteater4eclipse.debug.core.AnteaterConfigConsts;
 
 public class AnteaterMainTab extends AbstractLaunchConfigurationTab {
 	private Text buildFile;
@@ -35,37 +39,58 @@ public class AnteaterMainTab extends AbstractLaunchConfigurationTab {
 
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
+		configuration.setAttribute(AnteaterConfigConsts.ATTR_BUILD_FILE, getFile().getAbsolutePath());
 	}
 
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
+		try {
+			buildFile.setText(configuration.getAttribute(AnteaterConfigConsts.ATTR_BUILD_FILE, ""));
+		} catch (CoreException e) {
+			setErrorMessage(e.getMessage());
+		}
+	}
+
+	private File getFile() {
+		File file = null;
 		ISelectionService ss = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService();
 		ISelection sel = ss.getSelection();
 		Object selectedObject = sel;
 		if (sel instanceof IStructuredSelection) {
 			selectedObject = ((IStructuredSelection) sel).getFirstElement();
-		} else if (selectedObject instanceof IAdaptable) {
+		}
+
+		if (selectedObject instanceof IAdaptable) {
 			IResource res = (IResource) ((IAdaptable) selectedObject).getAdapter(IResource.class);
-			IProject project = res.getProject();
-			System.out.println("Project found: " + project.getName());
+			file = res.getLocation().toFile();
 		} else {
 			IEditorInput editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor().getEditorInput();
 
 			if (editor instanceof IURIEditorInput) {
-				((IURIEditorInput) editor).getURI();
+				file = new File(((IURIEditorInput) editor).getURI());
 			}
 
 		}
+		return file;
+	}
+
+	@Override
+	public boolean isValid(ILaunchConfiguration launchConfig) {
+		if (new File(buildFile.getText()).exists()) {
+			setErrorMessage(null);
+			return true;
+		}
+		setErrorMessage("Build file not found.");
+		return false;
 	}
 
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-
+		configuration.setAttribute(AnteaterConfigConsts.ATTR_BUILD_FILE, new File(buildFile.getText()).getAbsolutePath());
 	}
 
 	@Override
 	public String getName() {
 		return "Anteater Main";
 	}
-
 }

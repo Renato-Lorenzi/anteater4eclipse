@@ -4,7 +4,6 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -12,11 +11,12 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.JavaLaunchDelegate;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 
-import br.com.anteater4eclipse.Activator;
+import br.com.anteater4eclipse.AnteaterPlugin;
 
 public class LauncherConfiguration extends JavaLaunchDelegate {
 
@@ -25,16 +25,15 @@ public class LauncherConfiguration extends JavaLaunchDelegate {
 
 		// Create VM config
 		VMRunnerConfiguration runConfig = new VMRunnerConfiguration("br.com.anteater.main.Main", getClasspath());
-		IResource res = configuration.getMappedResources()[0];
-		File buildFile = res.getLocation().toFile();
-		runConfig.setProgramArguments(new String[] { buildFile.getAbsolutePath() });
+		String buildFile = configuration.getAttribute(AnteaterConfigConsts.ATTR_BUILD_FILE, "");
+		runConfig.setProgramArguments(new String[] { buildFile });
 		String[] vmArgs = new String[] { "" };
 		String[] realArgs = new String[vmArgs.length + 1];
 		System.arraycopy(vmArgs, 0, realArgs, 1, vmArgs.length);
 		// realArgs[0] = javaPolicy;
 		// runConfig.setVMArguments(realArgs);
-
-		runConfig.setWorkingDirectory(res.getProject().getLocation().toString());
+		// TODO Tem que pegar o working dir
+		runConfig.setWorkingDirectory(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, ""));
 		// Bootpath
 		// String[] bootpath = getBootpath(configuration);
 		// runConfig.setBootClassPath(bootpath);
@@ -58,13 +57,12 @@ public class LauncherConfiguration extends JavaLaunchDelegate {
 
 	private static URI locateFile(String fullPath) {
 		try {
-			URL url = FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID), new Path(fullPath), null);
+			URL url = FileLocator.find(Platform.getBundle(AnteaterPlugin.PLUGIN_ID), new Path(fullPath), null);
 			if (url != null)
 				return FileLocator.resolve(url).toURI();
 		} catch (Exception e) {
 		}
 		return null;
 	}
-	
-	
+
 }
