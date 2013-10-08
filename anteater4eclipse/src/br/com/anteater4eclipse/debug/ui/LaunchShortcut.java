@@ -30,7 +30,7 @@ public class LaunchShortcut implements ILaunchShortcut {
 
 	private void doLaunch(String mode, String fileName) {
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-		ILaunchConfigurationType type = launchManager.getLaunchConfigurationType("br.anteater4eclipse.debug.LauncherConfiguration");
+		ILaunchConfigurationType type = launchManager.getLaunchConfigurationType("br.com.anteater4eclipse.debug.core.LauncherConfiguration");
 		try {
 			// check for an existing launch config for the anteatear file
 			ILaunchConfiguration[] configurations = launchManager.getLaunchConfigurations(type);

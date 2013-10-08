@@ -49,8 +49,8 @@
 		id = "org.eclipse.ui.externaltools.launchGroup.builder"
 		mode = "run"		
 		label = "Anteater"
-		image = "icons/sample.gif"
-		bannerImage = "icons/sample.gif"
+		image = "icons/anteater_engineer.png"
+		bannerImage = "icons/anteater_engineer.png"
 		public = "true">
 	</launchGroup>  
 </extension>

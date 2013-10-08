@@ -3,6 +3,8 @@ package br.com.anteater4eclipse.debug.core;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
@@ -24,35 +26,37 @@ public class LauncherConfiguration extends JavaLaunchDelegate {
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 
 		// Create VM config
-		VMRunnerConfiguration runConfig = new VMRunnerConfiguration("br.com.anteater.main.Main", getClasspath());
+		VMRunnerConfiguration runConfig = new VMRunnerConfiguration("br.com.anteater.main.Main", getCompleteClasspath(configuration));
 		String buildFile = configuration.getAttribute(AnteaterConfigConsts.ATTR_BUILD_FILE, "");
-		runConfig.setProgramArguments(new String[] { buildFile });
-		String[] vmArgs = new String[] { "" };
-		String[] realArgs = new String[vmArgs.length + 1];
-		System.arraycopy(vmArgs, 0, realArgs, 1, vmArgs.length);
-		// realArgs[0] = javaPolicy;
-		// runConfig.setVMArguments(realArgs);
-		// TODO Tem que pegar o working dir
-		runConfig.setWorkingDirectory(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, ""));
+		runConfig.setProgramArguments(getProgramArguments(configuration, buildFile));
+		runConfig.setVMArguments(getVMArguments(configuration).split(" "));
+		runConfig.setWorkingDirectory(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, new File(buildFile).getParent()));
 		// Bootpath
-		// String[] bootpath = getBootpath(configuration);
-		// runConfig.setBootClassPath(bootpath);
-
-		// Launch the configuration
-		// this.fCurrentLaunchConfiguration = configuration;
+		String[] bootpath = getBootpath(configuration);
+		runConfig.setBootClassPath(bootpath);
 
 		IVMRunner runner = super.getVMRunner(configuration, mode);
 		runner.run(runConfig, launch, monitor);
 	}
 
-	private String[] getClasspath() {
+	private String[] getProgramArguments(ILaunchConfiguration configuration, String buildFile) throws CoreException {
+		ArrayList<String> args = new ArrayList<String>();
+		args.add(buildFile);
+		args.addAll(Arrays.asList(getProgramArguments(configuration).split(" ")));
+		return args.toArray(new String[] {});
+	}
+
+	private String[] getCompleteClasspath(ILaunchConfiguration configuration) throws CoreException {
 		URI locateFile = locateFile("./lib");
 		File libDir = new File(locateFile);
 		String[] jars = libDir.list();
 		for (int i = 0; i < jars.length; i++) {
 			jars[i] = libDir + "/" + jars[i];
 		}
-		return jars;
+		ArrayList<String> path = new ArrayList<String>();
+		path.addAll(Arrays.asList(getClasspath(configuration)));
+		path.addAll(Arrays.asList(jars));
+		return path.toArray(new String[] {});
 	}
 
 	private static URI locateFile(String fullPath) {
