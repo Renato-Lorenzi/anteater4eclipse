@@ -1,5 +1,6 @@
 package br.com.anteater4eclipse;
 
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -14,7 +15,7 @@ public class AnteaterPlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static AnteaterPlugin plugin;
-	
+
 	/**
 	 * The constructor
 	 */
@@ -41,7 +42,7 @@ public class AnteaterPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the shared instance
-	 *
+	 * 
 	 * @return the shared instance
 	 */
 	public static AnteaterPlugin getDefault() {
@@ -51,11 +52,21 @@ public class AnteaterPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns an image descriptor for the image file at the given
 	 * plug-in relative path
-	 *
-	 * @param path the path
+	 * 
+	 * @param path
+	 *            the path
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
+
+	public static void log(int severity, String message) {
+		getDefault().getLog().log(new Status(severity, PLUGIN_ID, message));
+	}
+
+	public static void log(int severity, String message, Throwable exception) {
+		getDefault().getLog().log(new Status(severity, PLUGIN_ID, message, exception));
+	}
+
 }
