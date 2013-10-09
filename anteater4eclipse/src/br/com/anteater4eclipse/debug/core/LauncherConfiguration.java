@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.JavaLaunchDelegate;
@@ -24,12 +25,12 @@ public class LauncherConfiguration extends JavaLaunchDelegate {
 
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-
 		// Create VM config
 		VMRunnerConfiguration runConfig = new VMRunnerConfiguration("br.com.anteater.main.Main", getCompleteClasspath(configuration));
 		String buildFile = configuration.getAttribute(AnteaterConfigConsts.ATTR_BUILD_FILE, "");
-		runConfig.setProgramArguments(getProgramArguments(configuration, buildFile));
-		runConfig.setVMArguments(getVMArguments(configuration).split(" "));
+		ExecutionArguments args = new ExecutionArguments(getCompleteVMArguments(configuration), getProgramArguments(configuration, buildFile));
+		runConfig.setProgramArguments(args.getProgramArgumentsArray());
+		runConfig.setVMArguments(args.getVMArgumentsArray());
 		runConfig.setWorkingDirectory(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, new File(buildFile).getParent()));
 		// Bootpath
 		String[] bootpath = getBootpath(configuration);
@@ -39,11 +40,13 @@ public class LauncherConfiguration extends JavaLaunchDelegate {
 		runner.run(runConfig, launch, monitor);
 	}
 
-	private String[] getProgramArguments(ILaunchConfiguration configuration, String buildFile) throws CoreException {
-		ArrayList<String> args = new ArrayList<String>();
-		args.add(buildFile);
-		args.addAll(Arrays.asList(getProgramArguments(configuration).split(" ")));
-		return args.toArray(new String[] {});
+	private String getCompleteVMArguments(ILaunchConfiguration configuration) throws CoreException {
+		File libDir = new File(locateFile("./lib"));
+		return getVMArguments(configuration) + " -Dant.home=\"" + libDir.getParent() + "\" -Dant.library.dir=\"" + libDir.getAbsolutePath() + "\"";
+	}
+
+	private String getProgramArguments(ILaunchConfiguration configuration, String buildFile) throws CoreException {
+		return buildFile + " " + getProgramArguments(configuration);
 	}
 
 	private String[] getCompleteClasspath(ILaunchConfiguration configuration) throws CoreException {
@@ -54,6 +57,11 @@ public class LauncherConfiguration extends JavaLaunchDelegate {
 			jars[i] = libDir + "/" + jars[i];
 		}
 		ArrayList<String> path = new ArrayList<String>();
+		File tools = new File(getVMInstall(configuration).getInstallLocation().getAbsolutePath() + File.separator + "lib" + File.separator + "tools.jar");
+		if (tools.exists()) {
+			path.add(tools.getAbsolutePath());
+		}
+
 		path.addAll(Arrays.asList(getClasspath(configuration)));
 		path.addAll(Arrays.asList(jars));
 		return path.toArray(new String[] {});
